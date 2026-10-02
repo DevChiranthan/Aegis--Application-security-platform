@@ -1,0 +1,266 @@
+export const FINDINGS = [
+  {
+    id: 'AEG-1042',
+    title: 'SQL injection in /rest/products/search',
+    cwe: 'CWE-89',
+    tool: 'Semgrep',
+    sev: 'critical',
+    status: 'Open',
+    correlated: true,
+  },
+  {
+    id: 'AEG-1039',
+    title: 'Hardcoded AWS credentials in deploy script',
+    cwe: 'CWE-798',
+    tool: 'Gitleaks',
+    sev: 'critical',
+    status: 'Open',
+    correlated: false,
+  },
+  {
+    id: 'AEG-1035',
+    title: 'Reflected XSS in feedback form',
+    cwe: 'CWE-79',
+    tool: 'Semgrep',
+    sev: 'high',
+    status: 'Open',
+    correlated: true,
+  },
+  {
+    id: 'AEG-1031',
+    title: 'Vulnerable dependency — lodash 4.17.15',
+    cwe: 'CWE-1321',
+    tool: 'Trivy',
+    sev: 'high',
+    status: 'Open',
+    correlated: false,
+  },
+  {
+    id: 'AEG-1028',
+    title: 'Broken access control on /api/admin/users',
+    cwe: 'CWE-284',
+    tool: 'ZAP',
+    sev: 'critical',
+    status: 'Open',
+    correlated: true,
+  },
+  {
+    id: 'AEG-1024',
+    title: 'XML external entity in /file/upload',
+    cwe: 'CWE-611',
+    tool: 'ZAP',
+    sev: 'medium',
+    status: 'Open',
+    correlated: false,
+  },
+  {
+    id: 'AEG-1019',
+    title: 'Insecure deserialization in session handler',
+    cwe: 'CWE-502',
+    tool: 'Semgrep',
+    sev: 'high',
+    status: 'Triaged',
+    correlated: false,
+  },
+  {
+    id: 'AEG-1015',
+    title: 'Server-side request forgery in /api/preview',
+    cwe: 'CWE-918',
+    tool: 'Semgrep',
+    sev: 'medium',
+    status: 'Open',
+    correlated: false,
+  },
+  {
+    id: 'AEG-1011',
+    title: 'Sensitive data exposure in error responses',
+    cwe: 'CWE-200',
+    tool: 'ZAP',
+    sev: 'low',
+    status: 'Open',
+    correlated: false,
+  },
+  {
+    id: 'AEG-1006',
+    title: 'Missing CSRF token on /api/profile/update',
+    cwe: 'CWE-352',
+    tool: 'ZAP',
+    sev: 'medium',
+    status: 'Resolved',
+    correlated: false,
+  },
+];
+
+export const SESSIONS = [
+  {
+    ip: '185.220.101.42',
+    proto: 'SSH',
+    dur: '14m 22s',
+    detail:
+      'Credential harvesting — tried default creds (root/toor, admin/admin)',
+    tag: 'Brute-force login',
+    time: '09:14',
+    live: true,
+  },
+  {
+    ip: '45.155.205.19',
+    proto: 'HTTP',
+    dur: '—',
+    detail: 'Canary hit: /wp-admin → IP flagged in Redis',
+    tag: 'Automated scanner sweep',
+    time: '08:52',
+    live: true,
+  },
+  {
+    ip: '91.219.237.4',
+    proto: 'SSH',
+    dur: '6m 03s',
+    detail:
+      'Read fake /etc/shadow, attempted escalation via decoy sudoers misconfig',
+    tag: 'Privilege escalation probing',
+    time: '08:40',
+    live: true,
+  },
+  {
+    ip: '103.74.19.61',
+    proto: 'HTTP',
+    dur: '—',
+    detail: 'Canary hits: /.env then /phpmyadmin',
+    tag: 'Credential & config harvesting',
+    time: '07:58',
+    live: false,
+  },
+  {
+    ip: '185.220.101.42',
+    proto: 'SSH',
+    dur: '9m 47s',
+    detail: 'Injected SQL into decoy internal DB shell exposed on fake host',
+    tag: 'SQL injection replicated',
+    time: '07:31',
+    live: false,
+  },
+  {
+    ip: '194.61.24.102',
+    proto: 'Telnet',
+    dur: '2m 10s',
+    detail: 'Scripted payload against decoy internal admin panel',
+    tag: 'XSS payload injection',
+    time: '06:45',
+    live: false,
+  },
+];
+
+export const PAIRS = [
+  {
+    finding: 'AEG-1042',
+    title: 'SQL injection',
+    cwe: 'CWE-89',
+    history: ['Medium', 'High', 'Critical'],
+    via: 'SQL injection replicated in decoy DB shell',
+    ip: '185.220.101.42',
+    time: '07:31',
+  },
+  {
+    finding: 'AEG-1028',
+    title: 'Broken access control',
+    cwe: 'CWE-284',
+    history: ['High', 'Critical'],
+    via: 'Privilege-escalation probing via decoy sudoers path',
+    ip: '91.219.237.4',
+    time: '08:40',
+  },
+  {
+    finding: 'AEG-1035',
+    title: 'Reflected XSS',
+    cwe: 'CWE-79',
+    history: ['Medium', 'High'],
+    via: 'XSS payload injection against decoy admin panel',
+    ip: '194.61.24.102',
+    time: '06:45',
+  },
+];
+
+export const ACTIONS = {
+  'AEG-1042':
+    'Review /rest/products/search and confirm parameterized queries are used for all user input.',
+  'AEG-1039':
+    'Rotate the exposed AWS keys and move deploy secrets into the secrets manager.',
+  'AEG-1035':
+    'Sanitize and encode output in the feedback form before rendering.',
+  'AEG-1031':
+    'Bump lodash to 4.17.21 or later to patch the prototype pollution path.',
+  'AEG-1028':
+    'Add role checks to /api/admin/users and audit existing sessions for misuse.',
+  'AEG-1024':
+    'Disable external entity resolution in the XML parser used by /file/upload.',
+  'AEG-1019':
+    'Replace raw deserialization in the session handler with a signed, typed format.',
+  'AEG-1015': 'Restrict /api/preview to an allowlist of internal hosts.',
+  'AEG-1011': 'Strip stack traces from production error responses.',
+  'AEG-1006': 'Resolved — CSRF token is now required on /api/profile/update.',
+};
+
+export const ASSETS = [
+  {
+    name: 'Juice Shop',
+    type: 'Web application',
+    icon: 'server',
+    status: 'at-risk',
+    findings: 3,
+    sevTop: 'critical',
+    lastScanned: '14m ago',
+  },
+  {
+    name: 'API Gateway',
+    type: 'API',
+    icon: 'server',
+    status: 'monitored',
+    findings: 2,
+    sevTop: 'medium',
+    lastScanned: '14m ago',
+  },
+  {
+    name: 'Admin Portal',
+    type: 'Internal tool',
+    icon: 'server',
+    status: 'at-risk',
+    findings: 1,
+    sevTop: 'critical',
+    lastScanned: '14m ago',
+  },
+  {
+    name: 'CI/CD pipeline',
+    type: 'GitHub Actions',
+    icon: 'git',
+    status: 'at-risk',
+    findings: 1,
+    sevTop: 'critical',
+    lastScanned: '1d ago',
+  },
+  {
+    name: 'PostgreSQL',
+    type: 'Database',
+    icon: 'db',
+    status: 'clear',
+    findings: 0,
+    sevTop: null,
+    lastScanned: '2h ago',
+  },
+  {
+    name: 'Redis',
+    type: 'Cache / flag store',
+    icon: 'db',
+    status: 'clear',
+    findings: 0,
+    sevTop: null,
+    lastScanned: '6h ago',
+  },
+];
+
+export const SEV_LABEL = {
+  critical: 'Critical',
+  high: 'High',
+  medium: 'Medium',
+  low: 'Low',
+};
+
